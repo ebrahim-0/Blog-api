@@ -20,7 +20,6 @@ export class UsersService {
     const existingUser = await this.prisma.user.findUnique({
       where: { email: user.email },
     });
-    
 
     if (existingUser) {
       throw new ConflictException('User with this email already exists');
@@ -112,7 +111,9 @@ export class UsersService {
       },
     });
 
-    return updatedUser;
+    const { password, ...userWithoutPassword } = updatedUser;
+
+    return userWithoutPassword;
   }
 
   async remove(id: number) {
