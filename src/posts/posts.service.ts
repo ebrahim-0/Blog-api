@@ -1,20 +1,17 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Request } from 'express';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { Post as PostModel } from '@prisma/client';
+import { AllPostsRes } from 'src/interfaces/post';
 
 @Injectable()
 export class PostsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createUser(req: Request, user: CreatePostDto) {
-    console.log(user);
-    console.log(req['user']);
+  async createUser(req: Request, user: CreatePostDto): Promise<PostModel> {
     const newPost = await this.prisma.post.create({
       data: {
         title: user.title,
@@ -26,7 +23,7 @@ export class PostsService {
     return newPost;
   }
 
-  async findAll(req: Request) {
+  async findAll(req: Request): Promise<AllPostsRes> {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
     const skip = (page - 1) * limit;
@@ -49,7 +46,7 @@ export class PostsService {
     };
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<PostModel> {
     const post = await this.prisma.post.findUnique({
       where: { id },
     });
@@ -57,7 +54,11 @@ export class PostsService {
     return post;
   }
 
-  async update(req: Request, id: number, updateUserDto: UpdatePostDto) {
+  async update(
+    req: Request,
+    id: number,
+    updateUserDto: UpdatePostDto,
+  ): Promise<PostModel> {
     const existingPost = await this.prisma.post.findUnique({
       where: { id },
     });
@@ -89,7 +90,7 @@ export class PostsService {
     return updatedPost;
   }
 
-  async remove(req: Request, id: number) {
+  async remove(req: Request, id: number): Promise<{ message: string }> {
     const existingPost = await this.prisma.post.findUnique({
       where: { id },
     });

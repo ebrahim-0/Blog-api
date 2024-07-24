@@ -19,6 +19,7 @@ async function bootstrap() {
     .setDescription('API for a blog application using NestJS and Prisma')
     .setVersion('1.0')
     .addTag('blog')
+    .addServer('https://blog-api-nest.up.railway.app', 'Production server')
     .addServer('http://localhost:5000', 'Local development server')
     .build();
 

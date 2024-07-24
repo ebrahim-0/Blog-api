@@ -1,32 +1,18 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  ParseIntPipe,
-  Req,
-  NotFoundException,
-  UseGuards,
-} from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { ParseIntPipe, UseGuards, NotFoundException } from '@nestjs/common';
+import { Get, Post, Patch, Delete } from '@nestjs/common';
+import { Controller, Param, Req, Body } from '@nestjs/common';
+import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiBody } from '@nestjs/swagger';
+import { Post as PostModel } from '@prisma/client';
 import { Request } from 'express';
 import { Roles } from 'src/decorators/roles/roles.decorator';
 import { Role } from 'src/enum/Role.enum';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
 import { RolesGuard } from 'src/guards/roles/roles.guard';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiOperation,
-  ApiParam,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { AllUsersRes, IUser, UserRes } from 'src/interfaces/user';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UsersService } from './users.service';
 
 @Controller('users')
 @UseGuards(AuthGuard, RolesGuard)
@@ -45,7 +31,10 @@ export class UsersController {
     type: CreateUserDto,
     description: 'Details of the user to be created',
   })
-  async register(@Req() req: Request, @Body() user: CreateUserDto) {
+  async register(
+    @Req() req: Request,
+    @Body() user: CreateUserDto,
+  ): Promise<UserRes> {
     const newUser = await this.usersService.createUser(req, user);
     return {
       message: 'User created successfully',
@@ -78,7 +67,7 @@ export class UsersController {
   })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
-  async findAll(@Req() req: Request) {
+  async findAll(@Req() req: Request): Promise<AllUsersRes> {
     return await this.usersService.findAll(req);
   }
 
@@ -89,7 +78,7 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'User found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'User not found' })
-  async findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<IUser> {
     const user = await this.usersService.findOne(id);
 
     if (!user) {
@@ -113,7 +102,7 @@ export class UsersController {
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
-  ) {
+  ): Promise<{ message: string; user: IUser }> {
     const updatedUser = await this.usersService.update(id, updateUserDto);
     return {
       message: 'User updated successfully',
@@ -128,7 +117,7 @@ export class UsersController {
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @Roles(Role.Admin, Role.user)
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id', ParseIntPipe) id: number): Promise<{ message: string }> {
     return this.usersService.remove(id);
   }
 
@@ -139,7 +128,7 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'User posts fetched successfully' })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async userPosts(@Req() req: Request, @Param('id', ParseIntPipe) id: number) {
+  async userPosts(@Param('id', ParseIntPipe) id: number): Promise<PostModel[]> {
     return await this.usersService.userPosts(id);
   }
 
@@ -154,10 +143,9 @@ export class UsersController {
   @ApiResponse({ status: 404, description: 'User or post not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async userPost(
-    @Req() req: Request,
     @Param('id', ParseIntPipe) id: number,
     @Param('postId', ParseIntPipe) postId: number,
-  ) {
+  ): Promise<PostModel> {
     return await this.usersService.userPost(id, postId);
   }
 }

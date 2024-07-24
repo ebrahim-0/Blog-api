@@ -11,12 +11,17 @@ import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
 import { Role } from 'src/enum/Role.enum';
 import { Request } from 'express';
+import { Post as PostModel } from '@prisma/client';
+import { AllUsersRes, IUser } from 'src/interfaces/user';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createUser(req: Request, user: CreateUserDto) {
+  async createUser(
+    req: Request,
+    user: CreateUserDto,
+  ): Promise<{ token: string; user: IUser }> {
     const existingUser = await this.prisma.user.findUnique({
       where: { email: user.email },
     });
@@ -45,7 +50,7 @@ export class UsersService {
     return { token, user: userWithoutPassword };
   }
 
-  async findAll(req: Request) {
+  async findAll(req: Request): Promise<AllUsersRes> {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
     const skip = (page - 1) * limit;
@@ -77,7 +82,7 @@ export class UsersService {
     };
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<IUser> {
     const user = await this.prisma.user.findUnique({
       where: { id },
       select: {
@@ -94,7 +99,7 @@ export class UsersService {
     return user;
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<IUser> {
     const existingUser = await this.prisma.user.findUnique({
       where: { id },
     });
@@ -116,7 +121,7 @@ export class UsersService {
     return userWithoutPassword;
   }
 
-  async remove(id: number) {
+  async remove(id: number): Promise<{ message: string }> {
     const existingUser = await this.prisma.user.findUnique({
       where: { id },
     });
@@ -134,7 +139,7 @@ export class UsersService {
     };
   }
 
-  async userPosts(id: number) {
+  async userPosts(id: number): Promise<PostModel[]> {
     const user = await this.prisma.user.findUnique({
       where: { id },
       select: {
@@ -145,7 +150,7 @@ export class UsersService {
     return user.posts;
   }
 
-  async userPost(id: number, postId: number) {
+  async userPost(id: number, postId: number): Promise<PostModel> {
     const userPost = await this.prisma.post.findFirst({
       where: {
         id: postId,

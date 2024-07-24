@@ -1,32 +1,18 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  ParseIntPipe,
-  Req,
-  NotFoundException,
-  UseGuards,
-} from '@nestjs/common';
+import { NotFoundException, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Get, Post, Patch, Delete } from '@nestjs/common';
+import { Controller, Req, Body, Param } from '@nestjs/common';
+import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiBody } from '@nestjs/swagger';
 import { Request } from 'express';
 import { Roles } from 'src/decorators/roles/roles.decorator';
 import { Role } from 'src/enum/Role.enum';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
-import { PostsService } from './posts.service';
+import { PostRoleGuard } from 'src/guards/post-role/post-role.guard';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { PostRoleGuard } from 'src/guards/post-role/post-role.guard';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiOperation,
-  ApiParam,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { PostsService } from './posts.service';
+import { Post as PostModel } from '@prisma/client';
+import { AllPostsRes } from 'src/interfaces/post';
 
 @Controller('posts')
 @ApiTags('posts')
@@ -35,7 +21,6 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Post()
-  
   @UseGuards(AuthGuard, PostRoleGuard)
   @Roles(Role.user)
   @ApiOperation({ summary: 'Create a new post' })
@@ -46,7 +31,10 @@ export class PostsController {
     type: CreatePostDto,
     description: 'Details of the post to be created',
   })
-  async create(@Req() req: Request, @Body() user: CreatePostDto) {
+  async create(
+    @Req() req: Request,
+    @Body() user: CreatePostDto,
+  ): Promise<{ message: string; post: PostModel }> {
     const post = await this.postsService.createUser(req, user);
     return {
       message: 'post created successfully',
@@ -78,7 +66,7 @@ export class PostsController {
   })
   @ApiResponse({ status: 403, description: 'Forbidden' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async findAll(@Req() req: Request) {
+  async findAll(@Req() req: Request): Promise<AllPostsRes> {
     return await this.postsService.findAll(req);
   }
 
@@ -90,14 +78,14 @@ export class PostsController {
   @ApiResponse({ status: 200, description: 'Post found' })
   @ApiResponse({ status: 404, description: 'Post not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async findOne(@Param('id', ParseIntPipe) id: number) {
-    const user = await this.postsService.findOne(id);
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<PostModel> {
+    const post = await this.postsService.findOne(id);
 
-    if (!user) {
-      throw new NotFoundException('User not found');
+    if (!post) {
+      throw new NotFoundException('post not found');
     }
 
-    return user;
+    return post;
   }
 
   @Patch(':id')
@@ -115,12 +103,12 @@ export class PostsController {
   async update(
     @Req() req: Request,
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdatePostDto,
-  ) {
-    const updatedUser = await this.postsService.update(req, id, updateUserDto);
+    @Body() updatePostDto: UpdatePostDto,
+  ): Promise<{ message: string; post: PostModel }> {
+    const updatedPost = await this.postsService.update(req, id, updatePostDto);
     return {
-      message: 'User updated successfully',
-      user: updatedUser,
+      message: 'Post updated successfully',
+      post: updatedPost,
     };
   }
 
@@ -132,7 +120,10 @@ export class PostsController {
   @ApiResponse({ status: 200, description: 'Post deleted successfully' })
   @ApiResponse({ status: 404, description: 'Post not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  remove(@Req() req: Request, @Param('id', ParseIntPipe) id: number) {
+  remove(
+    @Req() req: Request,
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<{ message: string }> {
     return this.postsService.remove(req, id);
   }
 }
