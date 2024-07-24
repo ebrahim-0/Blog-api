@@ -31,11 +31,12 @@ import {
 @Controller('posts')
 @ApiTags('posts')
 @ApiBearerAuth()
-@UseGuards(AuthGuard, PostRoleGuard)
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Post()
+  
+  @UseGuards(AuthGuard, PostRoleGuard)
   @Roles(Role.user)
   @ApiOperation({ summary: 'Create a new post' })
   @ApiResponse({ status: 201, description: 'Post created successfully' })
@@ -45,7 +46,7 @@ export class PostsController {
     type: CreatePostDto,
     description: 'Details of the post to be created',
   })
-  async register(@Req() req: Request, @Body() user: CreatePostDto) {
+  async create(@Req() req: Request, @Body() user: CreatePostDto) {
     const post = await this.postsService.createUser(req, user);
     return {
       message: 'post created successfully',
@@ -54,7 +55,7 @@ export class PostsController {
   }
 
   @Get()
-  @Roles(Role.Admin, Role.user)
+  // @Roles(Role.Admin, Role.user)
   @ApiOperation({ summary: 'Get all posts' })
   @ApiResponse({
     status: 200,
@@ -82,6 +83,7 @@ export class PostsController {
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard, PostRoleGuard)
   @Roles(Role.Admin, Role.user)
   @ApiOperation({ summary: 'Get a post by ID' })
   @ApiParam({ name: 'id', type: Number, description: 'Post ID' })
@@ -99,6 +101,7 @@ export class PostsController {
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard, PostRoleGuard)
   @Roles(Role.user)
   @ApiOperation({ summary: 'Update a post by ID' })
   @ApiParam({ name: 'id', type: Number, description: 'Post ID' })
@@ -122,6 +125,7 @@ export class PostsController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard, PostRoleGuard)
   @Roles(Role.Admin, Role.user)
   @ApiOperation({ summary: 'Delete a post by ID' })
   @ApiParam({ name: 'id', type: Number, description: 'Post ID' })
