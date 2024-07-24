@@ -45,8 +45,8 @@ export class UsersController {
     type: CreateUserDto,
     description: 'Details of the user to be created',
   })
-  async register(@Body() user: CreateUserDto) {
-    const newUser = await this.usersService.createUser(user);
+  async register(@Req() req: Request, @Body() user: CreateUserDto) {
+    const newUser = await this.usersService.createUser(req, user);
     return {
       message: 'User created successfully',
       user: newUser.user,

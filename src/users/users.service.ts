@@ -16,16 +16,17 @@ import { Request } from 'express';
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createUser(user: CreateUserDto) {
+  async createUser(req: Request, user: CreateUserDto) {
     const existingUser = await this.prisma.user.findUnique({
       where: { email: user.email },
     });
+    
 
     if (existingUser) {
       throw new ConflictException('User with this email already exists');
     }
 
-    if (user.role === Role.Admin) {
+    if (user.role === Role.Admin && req['user'].role !== Role.Admin) {
       throw new UnauthorizedException('Only admins can create admin accounts');
     }
 
@@ -157,5 +158,4 @@ export class UsersService {
 
     return userPost;
   }
-
 }

@@ -37,9 +37,9 @@ export class CreateUserDto extends UserDto {
   @IsString()
   @IsNotEmpty()
   @MinLength(8)
-  @Matches(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*).+$'), {
-    message: 'Password too weak',
-  })
+  // @Matches(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*).+$'), {
+  //   message: 'Password too weak',
+  // })
   @ApiProperty({
     required: true,
   })

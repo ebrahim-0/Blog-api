@@ -1,16 +1,13 @@
 import {
   BadRequestException,
   ConflictException,
-  ForbiddenException,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto, LoginUserDto } from 'src/users/dto/create-user.dto';
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
 import { Role } from 'src/enum/Role.enum';
-
 @Injectable()
 export class AuthService {
   constructor(private readonly prisma: PrismaService) {}
@@ -24,15 +21,14 @@ export class AuthService {
       throw new ConflictException('User with this email already exists');
     }
 
-    if (user.role === Role.Admin) {
-      throw new UnauthorizedException('Only admins can create admin accounts');
-    }
-
     const hashedPassword = await bcrypt.hash(user.password, 10);
     user.password = hashedPassword;
 
     const createdUser = await this.prisma.user.create({
-      data: user,
+      data: {
+        ...user,
+        role: Role.user,
+      },
     });
 
     const { password, ...userWithoutPassword } = createdUser;
