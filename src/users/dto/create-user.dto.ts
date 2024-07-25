@@ -10,16 +10,16 @@ import {
 import { Role } from 'src/enum/Role.enum';
 
 export class UserDto {
-  @IsString()
-  @IsNotEmpty()
+  @IsString({ message: 'Name must be a string' })
+  @IsNotEmpty({ message: 'Name is required' })
   @ApiProperty({
     example: 'John Doe',
     required: true,
   })
   name: string;
-  @IsString()
-  @IsNotEmpty()
   @IsEmail()
+  @IsString({ message: 'Email must be a string' })
+  @IsNotEmpty({ message: 'Email is required' })
   @ApiProperty({
     example: 'test@test.com',
     required: true,
@@ -34,12 +34,12 @@ export class UserDto {
 }
 
 export class CreateUserDto extends UserDto {
-  @IsString()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Password is required' })
+  @IsString({ message: 'Password must be a string' })
   @MinLength(8)
-  // @Matches(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*).+$'), {
-  //   message: 'Password too weak',
-  // })
+  @Matches(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*).+$'), {
+    message: 'Password too weak',
+  })
   @ApiProperty({
     required: true,
   })
@@ -47,16 +47,16 @@ export class CreateUserDto extends UserDto {
 }
 
 export class LoginUserDto {
-  @IsString()
-  @IsNotEmpty()
+  @IsString({ message: 'Email must be a string' })
+  @IsNotEmpty({ message: 'Email is required' })
   @IsEmail()
   @ApiProperty({
     example: 'test@test.com',
     required: true,
   })
   email: string;
-  @IsString()
-  @IsNotEmpty()
+  @IsString({ message: 'Password must be a string' })
+  @IsNotEmpty({ message: 'Password is required' })
   @ApiProperty({
     required: true,
   })
