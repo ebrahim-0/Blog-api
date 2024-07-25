@@ -14,6 +14,8 @@ async function bootstrap() {
     }),
   );
 
+  app.enableCors();
+
   const options = new DocumentBuilder()
     .setTitle('NestJS Prisma Blog API')
     .setDescription('API for a blog application using NestJS and Prisma')
