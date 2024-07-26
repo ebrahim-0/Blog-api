@@ -4,6 +4,7 @@ export interface AllUsersRes {
   users: Omit<UserModel, 'password'>[];
   currentPage: number;
   perPage: number;
+  totalPages: number;
   totalItems: number;
   hasMore: boolean;
 }

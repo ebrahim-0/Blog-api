@@ -5,5 +5,6 @@ export interface AllPostsRes {
   currentPage: number;
   perPage: number;
   totalItems: number;
+  totalPages: number;
   hasMore: boolean;
 }

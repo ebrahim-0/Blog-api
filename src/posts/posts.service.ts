@@ -37,10 +37,13 @@ export class PostsService {
 
     const hasMore = skip + posts.length < totalItems;
 
+    const totalPages = Math.ceil(totalItems / limit);
+
     return {
       posts,
       currentPage: page,
       perPage: limit,
+      totalPages,
       totalItems,
       hasMore,
     };

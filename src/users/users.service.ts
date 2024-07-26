@@ -73,10 +73,13 @@ export class UsersService {
 
     const hasMore = skip + users.length < totalItems;
 
+    const totalPages = Math.ceil(totalItems / limit);
+
     return {
       users,
       currentPage: page,
       perPage: limit,
+      totalPages,
       totalItems,
       hasMore,
     };
