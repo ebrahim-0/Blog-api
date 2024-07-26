@@ -17,12 +17,12 @@ model User {
   id        Int      @id @default(autoincrement())
   name      String
   email     String   @unique
-  password  String   
+  password  String
   role      Role     @default(USER)
   posts     Post[]
-  comments  Comment[]
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt 
+  updatedAt DateTime @updatedAt
+
   @@map("users")
 }
 
@@ -31,24 +31,12 @@ model Post {
   title     String
   content   String
   published Boolean  @default(false)
-  comments  Comment[]
   author    User?    @relation(fields: [authorId], references: [id])
   authorId  Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  @@map("posts")
-}
 
-model Comment {
-  id        Int      @id @default(autoincrement())
-  content   String
-  post      Post     @relation(fields: [postId], references: [id])
-  postId    Int
-  author    User?    @relation(fields: [authorId], references: [id])
-  authorId  Int?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  @@map("comments")
+  @@map("posts")
 }
 
 enum Role {

@@ -1,8 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationExceptionFilter } from './exceptions/validation.exception';
+import { ValidationError } from 'class-validator';
 
 async function bootstrap() {
   const PORT = process.env.PORT || 5000;
@@ -13,10 +14,22 @@ async function bootstrap() {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+      exceptionFactory: (errors: ValidationError[]) => {
+        let formattedErrors = {};
+        errors.forEach((error) => {
+          formattedErrors[error.property] = Object.values(error.constraints);
+        });
+
+        return new BadRequestException({
+          errors: formattedErrors,
+          error: 'Bad Request',
+          statusCode: 400,
+        });
+      },
     }),
   );
 
-  app.useGlobalFilters(new ValidationExceptionFilter());
+  // app.useGlobalFilters(new ValidationExceptionFilter());
 
   app.enableCors();
 

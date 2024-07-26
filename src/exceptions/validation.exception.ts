@@ -19,7 +19,11 @@ export class ValidationExceptionFilter implements ExceptionFilter {
     };
 
     const formattedErrors = this.formatErrors(exceptionResponse.message);
-    response.status(status).json({ errors: formattedErrors });
+    response.status(status).json({
+      errors: formattedErrors,
+      error: 'Bad Request',
+      statusCode: status,
+    });
   }
 
   private formatErrors(messages: any): Record<string, string[]> {
@@ -28,7 +32,7 @@ export class ValidationExceptionFilter implements ExceptionFilter {
     if (Array.isArray(messages)) {
       messages.forEach((message) => {
         const match = message.match(
-          /^(.*?)(?:\s*(?:must be|should be|is)\s*(.*))$/,
+          /^(.*?)(?:\s*(?:must be|should be|is|required)\s*(.*))$/,
         );
         if (match) {
           const field = match[1].trim().toLowerCase();

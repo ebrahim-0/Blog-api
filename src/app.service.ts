@@ -6,6 +6,6 @@ export class AppService {
     return {
       message: 'Welcome to our Blog API!',
       date: new Date().toISOString(),
-    }
+    };
   }
 }
