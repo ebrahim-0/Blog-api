@@ -8,6 +8,7 @@ import { CreateUserDto, LoginUserDto } from 'src/users/dto/create-user.dto';
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
 import { Role } from 'src/enum/Role.enum';
+import { generateToken } from 'src/utils/generateToken';
 @Injectable()
 export class AuthService {
   constructor(private readonly prisma: PrismaService) {}
@@ -33,9 +34,7 @@ export class AuthService {
 
     const { password, ...userWithoutPassword } = createdUser;
 
-    const token = jwt.sign({ ...userWithoutPassword }, process.env.JWT_SECRET, {
-      expiresIn: '1d',
-    });
+    const token = generateToken(userWithoutPassword, '1d');
 
     return { token, user: userWithoutPassword };
   }
@@ -60,9 +59,7 @@ export class AuthService {
 
     const { password, ...userWithoutPassword } = existingUser;
 
-    const token = jwt.sign({ ...userWithoutPassword }, process.env.JWT_SECRET, {
-      expiresIn: '1d',
-    });
+    const token = generateToken(userWithoutPassword, '1d');
 
     return { token, user: userWithoutPassword };
   }
