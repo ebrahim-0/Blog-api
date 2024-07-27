@@ -22,6 +22,7 @@ export class AdminGuard implements CanActivate {
     if (user.role !== Role.Admin) {
       throw new ForbiddenException('You are not an admin');
     }
+
     return true;
   }
 }

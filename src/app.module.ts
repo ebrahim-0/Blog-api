@@ -9,17 +9,22 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaService } from './prisma/prisma.service';
 import { UsersModule } from './users/users.module';
-import { AuthService } from './auth/auth.service';
-import { AuthController } from './auth/auth.controller';
 import { AuthMiddleware } from './middlewares/auth.middleware';
 import { PostsModule } from './posts/posts.module';
-import { AdminController } from './admin.controller';
-import { AdminService } from './admin.service';
+import { AuthModule } from './auth/auth.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
-  imports: [UsersModule, PostsModule, ConfigModule.forRoot()],
-  controllers: [AppController, AdminController, AuthController],
-  providers: [AppService, PrismaService, AdminService, AuthService],
+  imports: [
+    UsersModule,
+    PostsModule,
+    AuthModule,
+    ConfigModule.forRoot(),
+    AuthModule,
+    AdminModule,
+  ],
+  controllers: [AppController],
+  providers: [AppService, PrismaService],
   exports: [PrismaService],
 })
 export class AppModule implements NestModule {
