@@ -4,6 +4,7 @@ import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationExceptionFilter } from './exceptions/validation.exception';
 import { ValidationError } from 'class-validator';
+import 'colors';
 
 async function bootstrap() {
   const PORT = process.env.PORT || 5000;
@@ -46,6 +47,10 @@ async function bootstrap() {
 
   SwaggerModule.setup('api-docs', app, document);
 
-  await app.listen(PORT);
+  await app.listen(PORT, () => {
+    console.log(
+      `Server is running on http://localhost:${PORT}`.cyan.underline.bold,
+    );
+  });
 }
 bootstrap();

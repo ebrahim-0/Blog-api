@@ -9,10 +9,13 @@ export class PrismaService
   async onModuleInit() {
     await this.$connect()
       .then(() => {
-        console.log('Database connected');
+        console.log('Database connected'.green.underline.bold + ' ✅');
       })
       .catch((e) => {
-        console.log('Error connecting to database', e);
+        console.log(
+          'Error connecting to database'.red.underline.bold + ' ❌',
+          e,
+        );
       });
   }
 
