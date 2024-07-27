@@ -1,7 +1,16 @@
-import { Body, Controller, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Req,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from 'src/users/dto/create-user.dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
+import * as jwt from 'jsonwebtoken';
+import { generateToken } from 'src/utils/generateToken';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -21,7 +30,8 @@ export class AuthController {
     return {
       message: 'User created successfully',
       user: newUser.user,
-      token: newUser.token,
+      accessToken: newUser.accessToken,
+      refreshToken: newUser.refreshToken,
     };
   }
 
@@ -39,7 +49,34 @@ export class AuthController {
     return {
       message: 'User logged in successfully',
       user: existingUser.user,
-      token: existingUser.token,
+      accessToken: existingUser.accessToken,
+      refreshToken: existingUser.refreshToken,
     };
+  }
+
+  @Post('refresh-token')
+  async refreshToken(@Req() req: Request) {
+    const refreshToken = req.headers['x-refresh-token'];
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token is required');
+    }
+
+    const tokenString = Array.isArray(refreshToken)
+      ? refreshToken[0]
+      : refreshToken;
+
+    try {
+      const user = jwt.verify(tokenString, process.env.JWT_SECRET);
+
+      const accessToken = jwt.sign(user, process.env.JWT_SECRET);
+
+      return {
+        user,
+        accessToken,
+        refreshToken,
+      };
+    } catch (error) {
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
   }
 }

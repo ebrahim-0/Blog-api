@@ -68,6 +68,7 @@ export class UsersService {
         updatedAt: true,
         name: true,
         posts: true,
+        refreshToken: true,
       },
     });
 
@@ -96,6 +97,7 @@ export class UsersService {
         posts: true,
         createdAt: true,
         updatedAt: true,
+        refreshToken: true,
       },
     });
 

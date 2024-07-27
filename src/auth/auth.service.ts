@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto, LoginUserDto } from 'src/users/dto/create-user.dto';
-import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
 import { Role } from 'src/enum/Role.enum';
 import { generateToken } from 'src/utils/generateToken';
@@ -34,9 +33,15 @@ export class AuthService {
 
     const { password, ...userWithoutPassword } = createdUser;
 
-    const token = generateToken(userWithoutPassword, '1d');
+    const accessToken = generateToken(userWithoutPassword, '1d');
+    const refreshToken = generateToken(userWithoutPassword, '30d');
 
-    return { token, user: userWithoutPassword };
+    await this.prisma.user.update({
+      where: { id: createdUser.id },
+      data: { refreshToken },
+    });
+
+    return { accessToken, refreshToken, user: userWithoutPassword };
   }
 
   async login(user: LoginUserDto) {
@@ -57,10 +62,20 @@ export class AuthService {
       throw new BadRequestException('Invalid password');
     }
 
-    const { password, ...userWithoutPassword } = existingUser;
+    const { password, refreshToken, ...userWithoutPassword } = existingUser;
 
-    const token = generateToken(userWithoutPassword, '1d');
+    const accessToken = generateToken(userWithoutPassword, '1m');
+    const newRefreshToken = generateToken(userWithoutPassword, '30d');
 
-    return { token, user: userWithoutPassword };
+    await this.prisma.user.update({
+      where: { id: existingUser.id },
+      data: { refreshToken: newRefreshToken },
+    });
+
+    return {
+      accessToken,
+      refreshToken: newRefreshToken,
+      user: userWithoutPassword,
+    };
   }
 }
