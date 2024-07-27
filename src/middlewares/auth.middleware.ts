@@ -18,7 +18,7 @@ export class AuthMiddleware implements NestMiddleware {
 
     jwt.verify(token, process.env.JWT_SECRET, function (err, decoded) {
       if (err) {
-        throw new BadRequestException();
+        throw new BadRequestException('Invalid token');
       }
 
       req['user'] = decoded;
