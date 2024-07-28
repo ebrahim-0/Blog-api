@@ -38,8 +38,18 @@ async function bootstrap() {
       'https://blog-api-nest.up.railway.app',
       'https://blog-pied-two-98.vercel.app',
     ],
+    
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
+    exposedHeaders: [
+      'Set-Cookie',
+      'Authorization',
+      'Origin',
+      'X-Requested-With',
+      'x-refresh-token',
+      'Content-Type',
+      'Accept',
+    ],
   });
 
   const options = new DocumentBuilder()

@@ -17,6 +17,15 @@ export class AuthMiddleware implements NestMiddleware {
       throw new UnauthorizedException('Access token is required');
     }
 
+     res.cookie('refreshToken', 'ajajajajajjj', {
+       httpOnly: false,
+       secure: process.env.NODE_ENV !== 'development', // Set to true only in production
+       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+       sameSite: 'none',
+       domain:
+         process.env.NODE_ENV !== 'development' ? '.vercel.app' : 'localhost',
+     });
+
     try {
       const decoded = this.jwtService.verify(token, {
         secret: process.env.JWT_SECRET,
@@ -44,19 +53,23 @@ export class AuthMiddleware implements NestMiddleware {
 
           res.cookie('refreshToken', refreshToken, {
             httpOnly: false,
-            secure: true,
+            secure: process.env.NODE_ENV !== 'development', // Set to true only in production
             maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
             sameSite: 'none',
-            domain: '.vercel.app',
-            // domain: 'http://localhost:5173',
+            domain:
+              process.env.NODE_ENV !== 'development'
+                ? '.vercel.app'
+                : 'localhost',
           });
           res.cookie('accessToken', accessToken, {
             httpOnly: false,
-            secure: true,
+            secure: process.env.NODE_ENV !== 'development', // Set to true only in production
             sameSite: 'none',
             maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-            domain: '.vercel.app',
-            // domain: 'http://localhost:5173',
+            domain:
+              process.env.NODE_ENV !== 'development'
+                ? '.vercel.app'
+                : 'localhost',
           });
           console.log('Refresh token is valid');
           req['user'] = decodedRefreshToken;
