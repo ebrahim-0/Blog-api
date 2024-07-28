@@ -35,12 +35,7 @@ async function bootstrap() {
   // app.useGlobalFilters(new ValidationExceptionFilter());
 
   app.enableCors({
-    origin: [
-      'http://localhost:5173',
-      'https://blog-api-nest.up.railway.app',
-      'https://blog-pied-two-98.vercel.app',
-    ],
-    
+    origin: 'https://blog-pied-two-98.vercel.app',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     exposedHeaders: [
       'Set-Cookie',
@@ -53,14 +48,13 @@ async function bootstrap() {
     ],
   });
   app.use(cookieParser());
-  app.use((req, res:Response, next) => {
+  app.use((req, res: Response, next) => {
     res.on('finish', () => {
       // console.log('Response headers:', res.getHeaders());
       // console.log('Response Cookies',res.cookie);
     });
     next();
   });
-
 
   const options = new DocumentBuilder()
     .setTitle('NestJS Prisma Blog API')
