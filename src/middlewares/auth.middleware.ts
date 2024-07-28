@@ -17,16 +17,13 @@ export class AuthMiddleware implements NestMiddleware {
       throw new UnauthorizedException('Access token is required');
     }
 
-    console.log()
     try {
       const decoded = this.jwtService.verify(token, {
         secret: process.env.JWT_SECRET,
       });
-      console.log(decoded)
       req['user'] = decoded;
       next();
     } catch (err) {
-      console.log(err)
       if (err.name === 'TokenExpiredError' && refreshToken) {
         try {
           const decodedRefreshToken = this.jwtService.verify(
