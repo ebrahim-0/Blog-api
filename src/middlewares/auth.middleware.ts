@@ -39,7 +39,7 @@ export class AuthMiddleware implements NestMiddleware {
           );
         }
       } else {
-        throw new BadRequestException('Invalid token');
+        throw new UnauthorizedException('Invalid token');
       }
     }
   }
