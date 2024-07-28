@@ -36,6 +36,7 @@ async function bootstrap() {
 
   app.enableCors({
     origin: 'https://blog-pied-two-98.vercel.app',
+    credentials: true, // Allow credentials
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     exposedHeaders: [
       'Set-Cookie',
