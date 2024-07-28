@@ -47,14 +47,16 @@ export class AuthMiddleware implements NestMiddleware {
             secure: true,
             maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
             sameSite: 'none',
-            domain: 'https://blog-pied-two-98.vercel.app',
+            domain: '.vercel.app',
+            // domain: 'http://localhost:5173',
           });
           res.cookie('accessToken', accessToken, {
             httpOnly: false,
             secure: true,
             sameSite: 'none',
             maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-            domain: 'https://blog-pied-two-98.vercel.app',
+            domain: '.vercel.app',
+            // domain: 'http://localhost:5173',
           });
           console.log('Refresh token is valid');
           req['user'] = decodedRefreshToken;
