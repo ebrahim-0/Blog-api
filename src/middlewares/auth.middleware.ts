@@ -24,23 +24,42 @@ export class AuthMiddleware implements NestMiddleware {
       req['user'] = decoded;
       next();
     } catch (err) {
-      if (err.name === 'TokenExpiredError' && refreshToken) {
+      console.log(err);
+      console.log(err.name);
+      console.log('refreshToken', refreshToken);
+      if (
+        (err.name === 'TokenExpiredError' ||
+          err.name === 'JsonWebTokenError') &&
+        refreshToken
+      ) {
         try {
-          const decodedRefreshToken = this.jwtService.verify(
-            refreshToken,
-            {
-              secret: process.env.JWT_REFRESH_SECRET,
-            },
-          );
+          const decodedRefreshToken = this.jwtService.verify(refreshToken, {
+            secret: process.env.JWT_REFRESH_SECRET,
+          });
 
           const accessToken = this.jwtService.sign(decodedRefreshToken, {
             secret: process.env.JWT_SECRET,
-            expiresIn: '1m',
           });
-          res.setHeader('x-access-token', accessToken);
-          req['user'] = decodedRefreshToken
+          res.setHeader('Authorization', `Bearer ${accessToken}`);
+
+          res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+            sameSite: 'none',
+          });
+          res.cookie('accessToken', accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'none',
+            maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+          });
+          console.log('Refresh token is valid');
+          req['user'] = decodedRefreshToken;
           next();
         } catch (refreshErr) {
+          console.log(refreshErr);
+          console.log('Refresh token is invalid or expired log');
           throw new UnauthorizedException(
             'Refresh token is invalid or expired',
           );

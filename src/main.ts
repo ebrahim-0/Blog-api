@@ -32,7 +32,15 @@ async function bootstrap() {
 
   // app.useGlobalFilters(new ValidationExceptionFilter());
 
-  app.enableCors();
+  app.enableCors({
+    origin: [
+      'http://localhost:5173',
+      'https://blog-api-nest.up.railway.app',
+      'https://blog-pied-two-98.vercel.app',
+    ],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  });
 
   const options = new DocumentBuilder()
     .setTitle('NestJS Prisma Blog API')
