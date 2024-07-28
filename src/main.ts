@@ -6,7 +6,6 @@ import { ValidationExceptionFilter } from './exceptions/validation.exception';
 import { ValidationError } from 'class-validator';
 import * as cookieParser from 'cookie-parser';
 import 'colors';
-import { Response } from 'express';
 
 async function bootstrap() {
   const PORT = process.env.PORT || 5000;
@@ -35,10 +34,10 @@ async function bootstrap() {
   // app.useGlobalFilters(new ValidationExceptionFilter());
 
   app.enableCors({
-    origin: 'https://blog-pied-two-98.vercel.app',
+    origin: ['http://localhost:5173', 'https://blog-pied-two-98.vercel.app'],
     credentials: true, // Allow credentials
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    
+
     exposedHeaders: [
       'Set-Cookie',
       'Authorization',
@@ -49,14 +48,7 @@ async function bootstrap() {
       'Accept',
     ],
   });
-  app.use(cookieParser());
-  app.use((req, res: Response, next) => {
-    res.on('finish', () => {
-      // console.log('Response headers:', res.getHeaders());
-      // console.log('Response Cookies',res.cookie);
-    });
-    next();
-  });
+  app.use(cookieParser('MY SECRET'));
 
   const options = new DocumentBuilder()
     .setTitle('NestJS Prisma Blog API')

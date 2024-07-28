@@ -13,6 +13,7 @@ import { AuthMiddleware } from './middlewares/auth.middleware';
 import { PostsModule } from './posts/posts.module';
 import { AuthModule } from './auth/auth.module';
 import { AdminModule } from './admin/admin.module';
+import { CookieMiddleware } from './middlewares/cookie/cookie.middleware';
 
 @Module({
   imports: [
@@ -35,6 +36,8 @@ export class AppModule implements NestModule {
         path: 'posts',
         method: RequestMethod.GET,
       })
+      .forRoutes('users', 'posts', 'admin')
+      .apply(CookieMiddleware)
       .forRoutes('users', 'posts', 'admin');
   }
 }
