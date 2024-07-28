@@ -7,16 +7,19 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
 import { Role } from 'src/enum/Role.enum';
 import { Request } from 'express';
 import { Post as PostModel } from '@prisma/client';
 import { AllUsersRes, IUser } from 'src/interfaces/user';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private jwtService: JwtService,
+  ) {}
 
   async createUser(
     req: Request,
@@ -43,8 +46,9 @@ export class UsersService {
 
     const { password, ...userWithoutPassword } = createdUser;
 
-    const token = jwt.sign({ ...userWithoutPassword }, process.env.JWT_SECRET, {
-      expiresIn: '1d',
+    const token = this.jwtService.sign(userWithoutPassword, {
+      secret: process.env.JWT_SECRET,
+      expiresIn: '1m',
     });
 
     return { token, user: userWithoutPassword };

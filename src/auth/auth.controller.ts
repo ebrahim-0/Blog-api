@@ -9,8 +9,6 @@ import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from 'src/users/dto/create-user.dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
-import * as jwt from 'jsonwebtoken';
-import { generateToken } from 'src/utils/generateToken';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -66,9 +64,8 @@ export class AuthController {
       : refreshToken;
 
     try {
-      const user = jwt.verify(tokenString, process.env.JWT_SECRET);
-
-      const accessToken = jwt.sign(user, process.env.JWT_SECRET);
+      const { user, accessToken, refreshToken } =
+        await this._AuthService.refreshToken(tokenString);
 
       return {
         user,
@@ -76,6 +73,7 @@ export class AuthController {
         refreshToken,
       };
     } catch (error) {
+      console.log(error);
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
   }

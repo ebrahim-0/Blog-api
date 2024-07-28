@@ -1,15 +1,14 @@
 import {
-  BadRequestException,
   Injectable,
   NestMiddleware,
   UnauthorizedException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { NextFunction, Request, Response } from 'express';
-import * as jwt from 'jsonwebtoken';
-import { generateToken } from 'src/utils/generateToken';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
+  constructor(private jwtService: JwtService) {}
   use(req: Request, res: Response, next: NextFunction) {
     const token = req.headers['authorization']?.split(' ')[1];
     const refreshToken = req.headers['x-refresh-token'] as string;
@@ -18,20 +17,31 @@ export class AuthMiddleware implements NestMiddleware {
       throw new UnauthorizedException('Access token is required');
     }
 
+    console.log()
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = this.jwtService.verify(token, {
+        secret: process.env.JWT_SECRET,
+      });
+      console.log(decoded)
       req['user'] = decoded;
       next();
     } catch (err) {
+      console.log(err)
       if (err.name === 'TokenExpiredError' && refreshToken) {
         try {
-          const decodedRefreshToken = jwt.verify(
+          const decodedRefreshToken = this.jwtService.verify(
             refreshToken,
-            process.env.JWT_SECRET,
+            {
+              secret: process.env.JWT_REFRESH_SECRET,
+            },
           );
-          const token = generateToken(decodedRefreshToken, '1d');
-          res.setHeader('x-access-token', token);
-          req['user'] = jwt.verify(token, process.env.JWT_SECRET);
+
+          const accessToken = this.jwtService.sign(decodedRefreshToken, {
+            secret: process.env.JWT_SECRET,
+            expiresIn: '1m',
+          });
+          res.setHeader('x-access-token', accessToken);
+          req['user'] = decodedRefreshToken
           next();
         } catch (refreshErr) {
           throw new UnauthorizedException(
@@ -39,7 +49,7 @@ export class AuthMiddleware implements NestMiddleware {
           );
         }
       } else {
-        throw new UnauthorizedException('Invalid token');
+        throw new UnauthorizedException('Invalid token or expired');
       }
     }
   }

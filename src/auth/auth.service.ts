@@ -7,10 +7,13 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto, LoginUserDto } from 'src/users/dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { Role } from 'src/enum/Role.enum';
-import { generateToken } from 'src/utils/generateToken';
+import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AuthService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private jwtService: JwtService,
+  ) {}
 
   async createUser(user: CreateUserDto) {
     const existingUser = await this.prisma.user.findUnique({
@@ -33,8 +36,16 @@ export class AuthService {
 
     const { password, ...userWithoutPassword } = createdUser;
 
-    const accessToken = generateToken(userWithoutPassword, '1d');
-    const refreshToken = generateToken(userWithoutPassword, '30d');
+    // const accessToken = generateToken(userWithoutPassword, '1d');
+    // const refreshToken = generateToken(userWithoutPassword, '30d');
+
+    const accessToken = this.jwtService.sign(userWithoutPassword, {
+      secret: process.env.JWT_SECRET,
+    });
+
+    const refreshToken = this.jwtService.sign(userWithoutPassword, {
+      secret: process.env.JWT_REFRESH_SECRET,
+    });
 
     await this.prisma.user.update({
       where: { id: createdUser.id },
@@ -64,9 +75,15 @@ export class AuthService {
 
     const { password, refreshToken, ...userWithoutPassword } = existingUser;
 
-    const accessToken = generateToken(userWithoutPassword, '1m');
-    const newRefreshToken = generateToken(userWithoutPassword, '30d');
+    const accessToken = this.jwtService.sign(userWithoutPassword, {
+      secret: process.env.JWT_SECRET,
+      expiresIn: '1m',
+    });
 
+    const newRefreshToken = this.jwtService.sign(userWithoutPassword, {
+      secret: process.env.JWT_REFRESH_SECRET,
+      expiresIn: '30d',
+    });
     await this.prisma.user.update({
       where: { id: existingUser.id },
       data: { refreshToken: newRefreshToken },
@@ -76,6 +93,22 @@ export class AuthService {
       accessToken,
       refreshToken: newRefreshToken,
       user: userWithoutPassword,
+    };
+  }
+
+  async refreshToken(refreshToken: string) {
+    const user = await this.jwtService.verify(refreshToken, {
+      secret: process.env.JWT_REFRESH_SECRET,
+    });
+
+    const accessToken = this.jwtService.sign(user, {
+      secret: process.env.JWT_SECRET,
+    });
+
+    return {
+      user,
+      accessToken,
+      refreshToken,
     };
   }
 }
