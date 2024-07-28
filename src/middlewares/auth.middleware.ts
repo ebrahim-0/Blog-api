@@ -17,14 +17,23 @@ export class AuthMiddleware implements NestMiddleware {
       throw new UnauthorizedException('Access token is required');
     }
 
-     res.cookie('refreshToken', 'ajajajajajjj', {
-       httpOnly: false,
-       secure: process.env.NODE_ENV !== 'development', // Set to true only in production
-       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-       sameSite: 'none',
-       domain:
-         process.env.NODE_ENV !== 'development' ? '.vercel.app' : 'localhost',
-     });
+    // res.cookie('refreshToken', 'ajajajajajjj', {
+    //   httpOnly: false,
+    //   secure: true  , // Set to true only in production
+    //   maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+    //   sameSite: 'none',
+    //   path: '/',
+    // });
+
+    res.cookie('token', token, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV !== 'development', // Set to true only in production
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+      sameSite: process.env.NODE_ENV !== 'development' ? 'none' : 'lax',
+      path: '/',
+    });
+
+    res.setHeader('111', '4444');
 
     try {
       const decoded = this.jwtService.verify(token, {
@@ -56,20 +65,14 @@ export class AuthMiddleware implements NestMiddleware {
             secure: process.env.NODE_ENV !== 'development', // Set to true only in production
             maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
             sameSite: 'none',
-            domain:
-              process.env.NODE_ENV !== 'development'
-                ? '.vercel.app'
-                : 'localhost',
+            path: '/',
           });
           res.cookie('accessToken', accessToken, {
             httpOnly: false,
             secure: process.env.NODE_ENV !== 'development', // Set to true only in production
             sameSite: 'none',
             maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-            domain:
-              process.env.NODE_ENV !== 'development'
-                ? '.vercel.app'
-                : 'localhost',
+            path: '/',
           });
           console.log('Refresh token is valid');
           req['user'] = decodedRefreshToken;

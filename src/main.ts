@@ -4,7 +4,9 @@ import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationExceptionFilter } from './exceptions/validation.exception';
 import { ValidationError } from 'class-validator';
+import * as cookieParser from 'cookie-parser';
 import 'colors';
+import { Response } from 'express';
 
 async function bootstrap() {
   const PORT = process.env.PORT || 5000;
@@ -40,7 +42,6 @@ async function bootstrap() {
     ],
     
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
     exposedHeaders: [
       'Set-Cookie',
       'Authorization',
@@ -51,6 +52,15 @@ async function bootstrap() {
       'Accept',
     ],
   });
+  app.use(cookieParser());
+  app.use((req, res:Response, next) => {
+    res.on('finish', () => {
+      // console.log('Response headers:', res.getHeaders());
+      // console.log('Response Cookies',res.cookie);
+    });
+    next();
+  });
+
 
   const options = new DocumentBuilder()
     .setTitle('NestJS Prisma Blog API')
