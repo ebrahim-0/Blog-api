@@ -26,7 +26,8 @@ export class AuthMiddleware implements NestMiddleware {
     // });
 
     res.cookie('token', token, {
-      httpOnly: false,
+      httpOnly: true,
+      signed: true,
       secure: process.env.NODE_ENV !== 'development', // Set to true only in production
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
       sameSite: process.env.NODE_ENV !== 'development' ? 'none' : 'lax',
