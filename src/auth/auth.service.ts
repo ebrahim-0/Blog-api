@@ -105,10 +105,19 @@ export class AuthService {
       secret: process.env.JWT_SECRET,
     });
 
+    const newRefreshToken = this.jwtService.sign(user, {
+      secret: process.env.JWT_REFRESH_SECRET,
+    });
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { refreshToken: newRefreshToken },
+    });
+
     return {
       user,
       accessToken,
-      refreshToken,
+      refreshToken: newRefreshToken,
     };
   }
 }
