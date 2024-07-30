@@ -1,6 +1,8 @@
 import {
+  BadRequestException,
   Body,
   Controller,
+  Param,
   Post,
   Req,
   UnauthorizedException,
@@ -9,6 +11,8 @@ import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto } from 'src/users/dto/create-user.dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
+import { forgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -73,7 +77,34 @@ export class AuthController {
         refreshToken,
       };
     } catch (error) {
+      console.log(error);
       throw new UnauthorizedException('Invalid or expired refresh token');
+    }
+  }
+
+  @Post('forgot-password')
+  async forgotPassword(@Body() body: forgotPasswordDto) {
+    try {
+      return await this._AuthService.forgotPassword(body);
+    } catch (error) {
+      throw new BadRequestException();
+    }
+  }
+
+  @Post('reset-password/:userId/:token')
+  async resetPassword(
+    @Param('userId') userId: string,
+    @Param('token') token: string,
+    @Body() resetPasswordDto: ResetPasswordDto,
+  ) {
+    try {
+      return await this._AuthService.resetPassword(
+        userId,
+        token,
+        resetPasswordDto,
+      );
+    } catch (error) {
+      throw new BadRequestException(error.message);
     }
   }
 }
