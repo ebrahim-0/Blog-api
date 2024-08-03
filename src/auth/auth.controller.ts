@@ -107,4 +107,14 @@ export class AuthController {
       throw new BadRequestException(error.message);
     }
   }
+
+  @Post('check-reset-token')
+  async checkResetToken(@Body() body: { token: string }) {
+    try {
+      return await this._AuthService.checkResetToken(body.token);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
 }
+  
