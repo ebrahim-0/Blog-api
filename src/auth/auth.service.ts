@@ -48,12 +48,12 @@ export class AuthService {
 
     const accessToken = this.jwtService.sign(userWithoutPassword, {
       secret: process.env.JWT_SECRET,
-      expiresIn: '15s',
+      expiresIn: '1d',
     });
 
     const refreshToken = this.jwtService.sign(userWithoutPassword, {
       secret: process.env.JWT_REFRESH_SECRET,
-      expiresIn: '1d',
+      expiresIn: '30d',
     });
 
     await this.prisma.user.update({
@@ -86,12 +86,12 @@ export class AuthService {
 
     const accessToken = this.jwtService.sign(userWithoutPassword, {
       secret: process.env.JWT_SECRET,
-      expiresIn: '15s',
+      expiresIn: '1d',
     });
 
     const newRefreshToken = this.jwtService.sign(userWithoutPassword, {
       secret: process.env.JWT_REFRESH_SECRET,
-      expiresIn: '1d',
+      expiresIn: '30d',
     });
     await this.prisma.user.update({
       where: { id: existingUser.id },
@@ -114,7 +114,7 @@ export class AuthService {
 
     const accessToken = this.jwtService.sign(userWithoutExp, {
       secret: process.env.JWT_SECRET,
-      expiresIn: '15s',
+      expiresIn: '1d',
     });
 
     return {
