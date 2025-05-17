@@ -5,7 +5,7 @@ import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiBearerAuth, ApiOperation, ApiBody } from '@nestjs/swagger';
 import { Request } from 'express';
 import { Roles } from 'src/decorators/roles/roles.decorator';
-import { Role } from 'src/enum/Role.enum';
+import { Role } from 'src/enum/Role-enum';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
 import { PostRoleGuard } from 'src/guards/post-role/post-role.guard';
 import { CreatePostDto } from './dto/create-post.dto';

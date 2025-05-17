@@ -6,7 +6,7 @@ import { ApiBearerAuth, ApiOperation, ApiBody } from '@nestjs/swagger';
 import { Post as PostModel } from '@prisma/client';
 import { Request } from 'express';
 import { Roles } from 'src/decorators/roles/roles.decorator';
-import { Role } from 'src/enum/Role.enum';
+import { Role } from 'src/enum/Role-enum';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
 import { RolesGuard } from 'src/guards/roles/roles.guard';
 import { AllUsersRes, IUser, UserRes } from 'src/interfaces/user';

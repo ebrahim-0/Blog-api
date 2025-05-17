@@ -8,7 +8,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
 import { Observable } from 'rxjs';
-import { Role } from 'src/enum/Role.enum';
+import { Role } from 'src/enum/Role-enum';
 
 @Injectable()
 export class RolesGuard implements CanActivate {

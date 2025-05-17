@@ -9,7 +9,7 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto, LoginUserDto } from 'src/users/dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
-import { Role } from 'src/enum/Role.enum';
+import { Role } from 'src/enum/Role-enum';
 import { JwtService } from '@nestjs/jwt';
 import { forgotPasswordDto } from './dto/forgot-password.dto';
 import { MailerService } from '@nestjs-modules/mailer';

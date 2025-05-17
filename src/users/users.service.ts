@@ -8,7 +8,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { Role } from 'src/enum/Role.enum';
+import { Role } from 'src/enum/Role-enum';
 import { Request } from 'express';
 import { Post as PostModel } from '@prisma/client';
 import { AllUsersRes, IUser } from 'src/interfaces/user';
