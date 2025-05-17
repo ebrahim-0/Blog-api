@@ -20,7 +20,6 @@ import { UsersService } from './users.service';
 @ApiBearerAuth()
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
   @Post()
   @Roles(Role.Admin)
   @ApiOperation({ summary: 'Create a new user' })
