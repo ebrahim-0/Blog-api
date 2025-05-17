@@ -78,7 +78,7 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'User found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'User not found' })
-  async findOne(@Param('id', ParseIntPipe) id: number): Promise<IUser> {
+  async findOne(@Param('id', ParseIntPipe) id: string): Promise<IUser> {
     const user = await this.usersService.findOne(id);
 
     if (!user) {
@@ -100,7 +100,7 @@ export class UsersController {
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<{ message: string; user: IUser }> {
     const updatedUser = await this.usersService.update(id, updateUserDto);
@@ -117,7 +117,7 @@ export class UsersController {
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @Roles(Role.Admin, Role.user)
-  remove(@Param('id', ParseIntPipe) id: number): Promise<{ message: string }> {
+  remove(@Param('id') id: string): Promise<{ message: string }> {
     return this.usersService.remove(id);
   }
 
@@ -128,7 +128,7 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'User posts fetched successfully' })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async userPosts(@Param('id', ParseIntPipe) id: number): Promise<PostModel[]> {
+  async userPosts(@Param('id') id: string): Promise<PostModel[]> {
     return await this.usersService.userPosts(id);
   }
 
@@ -143,8 +143,8 @@ export class UsersController {
   @ApiResponse({ status: 404, description: 'User or post not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async userPost(
-    @Param('id', ParseIntPipe) id: number,
-    @Param('postId', ParseIntPipe) postId: number,
+    @Param('id') id: string,
+    @Param('postId') postId: string,
   ): Promise<PostModel> {
     return await this.usersService.userPost(id, postId);
   }

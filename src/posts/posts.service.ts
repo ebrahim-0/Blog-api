@@ -49,7 +49,7 @@ export class PostsService {
     };
   }
 
-  async findOne(id: number): Promise<PostModel> {
+  async findOne(id: string): Promise<PostModel> {
     const post = await this.prisma.post.findUnique({
       where: { id },
     });
@@ -59,7 +59,7 @@ export class PostsService {
 
   async update(
     req: Request,
-    id: number,
+    id: string,
     updateUserDto: UpdatePostDto,
   ): Promise<PostModel> {
     const existingPost = await this.prisma.post.findUnique({
@@ -93,7 +93,7 @@ export class PostsService {
     return updatedPost;
   }
 
-  async remove(req: Request, id: number): Promise<{ message: string }> {
+  async remove(req: Request, id: string): Promise<{ message: string }> {
     const existingPost = await this.prisma.post.findUnique({
       where: { id },
     });

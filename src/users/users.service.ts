@@ -91,7 +91,7 @@ export class UsersService {
     };
   }
 
-  async findOne(id: number): Promise<IUser> {
+  async findOne(id: string): Promise<IUser> {
     const user = await this.prisma.user.findUnique({
       where: { id },
       select: {
@@ -110,7 +110,7 @@ export class UsersService {
     return user;
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<IUser> {
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<IUser> {
     const existingUser = await this.prisma.user.findUnique({
       where: { id },
     });
@@ -132,7 +132,7 @@ export class UsersService {
     return userWithoutPassword;
   }
 
-  async remove(id: number): Promise<{ message: string }> {
+  async remove(id: string): Promise<{ message: string }> {
     const existingUser = await this.prisma.user.findUnique({
       where: { id },
     });
@@ -150,7 +150,7 @@ export class UsersService {
     };
   }
 
-  async userPosts(id: number): Promise<PostModel[]> {
+  async userPosts(id: string): Promise<PostModel[]> {
     const user = await this.prisma.user.findUnique({
       where: { id },
       select: {
@@ -161,7 +161,7 @@ export class UsersService {
     return user.posts;
   }
 
-  async userPost(id: number, postId: number): Promise<PostModel> {
+  async userPost(id: string, postId: string): Promise<PostModel> {
     const userPost = await this.prisma.post.findFirst({
       where: {
         id: postId,

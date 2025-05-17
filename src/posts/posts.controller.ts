@@ -78,7 +78,7 @@ export class PostsController {
   @ApiResponse({ status: 200, description: 'Post found' })
   @ApiResponse({ status: 404, description: 'Post not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async findOne(@Param('id', ParseIntPipe) id: number): Promise<PostModel> {
+  async findOne(@Param('id', ParseIntPipe) id: string): Promise<PostModel> {
     const post = await this.postsService.findOne(id);
 
     if (!post) {
@@ -102,7 +102,7 @@ export class PostsController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async update(
     @Req() req: Request,
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
     @Body() updatePostDto: UpdatePostDto,
   ): Promise<{ message: string; post: PostModel }> {
     const updatedPost = await this.postsService.update(req, id, updatePostDto);
@@ -122,7 +122,7 @@ export class PostsController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   remove(
     @Req() req: Request,
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
   ): Promise<{ message: string }> {
     return this.postsService.remove(req, id);
   }

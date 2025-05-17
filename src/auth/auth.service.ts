@@ -203,10 +203,8 @@ export class AuthService {
     resetPasswordDto: ResetPasswordDto,
   ) {
     try {
-      const id = +userId;
-
       const user = await this.prisma.user.findUnique({
-        where: { id },
+        where: { id: userId },
       });
 
       if (!user) {
@@ -235,7 +233,7 @@ export class AuthService {
       );
 
       await this.prisma.user.update({
-        where: { id },
+        where: { id: userId },
         data: { password: hashedPassword, isRestToken: true },
       });
 
