@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UnauthorizedException } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '@/prisma/prisma.service';
 import { Request } from 'express';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Post as PostModel } from '@prisma/client';
-import { AllPostsRes } from 'src/interfaces/post';
+import { AllPostsRes } from '@/interfaces/post';
 
 @Injectable()
 export class PostsService {

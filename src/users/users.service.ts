@@ -6,13 +6,13 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { Role } from 'src/enum/Role-enum';
 import { Request } from 'express';
 import { Post as PostModel } from '@prisma/client';
-import { AllUsersRes, IUser } from 'src/interfaces/user';
 import { JwtService } from '@nestjs/jwt';
+import { Role } from '@/enum/Role-enum';
+import { PrismaService } from '@/prisma/prisma.service';
+import { AllUsersRes, IUser } from '@/interfaces/user';
 
 @Injectable()
 export class UsersService {

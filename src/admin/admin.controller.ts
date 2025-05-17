@@ -1,10 +1,10 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { AdminService } from './admin.service';
-import { AuthGuard } from 'src/guards/auth/auth.guard';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AdminGuard } from 'src/guards/admin/admin.guard';
-import { Roles } from 'src/decorators/roles/roles.decorator';
-import { Role } from 'src/enum/Role-enum';
+import { AuthGuard } from '@/guards/auth/auth.guard';
+import { AdminGuard } from '@/guards/admin/admin.guard';
+import { Role } from '@/enum/Role-enum';
+import { Roles } from '@/decorators/roles/roles.decorator';
 
 @Controller('admin')
 @ApiTags('admin')

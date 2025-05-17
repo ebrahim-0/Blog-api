@@ -4,15 +4,15 @@ import { Controller, Req, Body, Param } from '@nestjs/common';
 import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiBearerAuth, ApiOperation, ApiBody } from '@nestjs/swagger';
 import { Request } from 'express';
-import { Roles } from 'src/decorators/roles/roles.decorator';
-import { Role } from 'src/enum/Role-enum';
-import { AuthGuard } from 'src/guards/auth/auth.guard';
-import { PostRoleGuard } from 'src/guards/post-role/post-role.guard';
+import { Roles } from '@/decorators/roles/roles.decorator';
+import { Role } from '@/enum/Role-enum';
+import { AuthGuard } from '@/guards/auth/auth.guard';
+import { PostRoleGuard } from '@/guards/post-role/post-role.guard';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostsService } from './posts.service';
 import { Post as PostModel } from '@prisma/client';
-import { AllPostsRes } from 'src/interfaces/post';
+import { AllPostsRes } from '@/interfaces/post';
 
 @Controller('posts')
 @ApiTags('posts')

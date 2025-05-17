@@ -8,11 +8,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateUserDto, LoginUserDto } from 'src/users/dto/create-user.dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { forgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { CreateUserDto, LoginUserDto } from '@/users/dto/create-user.dto';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -117,4 +117,3 @@ export class AuthController {
     }
   }
 }
-  

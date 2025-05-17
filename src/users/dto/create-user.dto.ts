@@ -7,7 +7,7 @@ import {
   Matches,
   MinLength,
 } from 'class-validator';
-import { Role } from 'src/enum/Role-enum';
+import { Role } from '@/enum/Role-enum';
 
 export class UserDto {
   @IsString()
